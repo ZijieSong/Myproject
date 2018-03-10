@@ -1,0 +1,47 @@
+<html>
+<body>
+<pre>
+    $!{value1}
+    $!{value2}
+    ${value3}
+
+    $!{getColors}
+
+    #foreach(${color} in ${getColors})
+        color is: $!{color} $!{foreach.index} in colors $!{foreach.count}
+    #end
+
+    #foreach($key in $getMap.keySet())
+        key is $key, value is $getMap.get($key)
+    #end
+
+    #foreach($entry in $getMap.entrySet())
+        key: $entry.key; value: $entry.value;          
+    #end
+
+    User: $people.name and the Description is $people.description
+
+    #set($title = "nowcorder")
+    title is ${title}
+
+    Parse: #parse("header.html")
+    Include: #include("header.html")
+
+    #macro(function, $index, $content)
+        Number $index is $content
+    #end
+
+    #foreach($color in $getColors)
+        #function($foreach.count, $color)
+    #end
+
+    #set($hello = "hello")
+    #set($hello1 = "${hello} 1")
+    #set($hello2 = '${hello} 2')
+
+    ${hello}
+    ${hello1}
+    ${hello2}
+</pre>
+</body>
+</html>
