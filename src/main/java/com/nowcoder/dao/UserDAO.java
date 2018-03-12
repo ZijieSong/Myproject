@@ -22,4 +22,7 @@ public interface UserDAO {
 
     @Delete({"delete from",tableName,"where id = #{id}"})
     void deleteById(int id);
+
+    @Select({"select", selectFields,"from",tableName,"where name = #{name}"})
+    User selectByName(String name);
 }
