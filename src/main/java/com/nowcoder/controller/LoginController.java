@@ -1,6 +1,6 @@
 package com.nowcoder.controller;
 
-import antlr.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import com.nowcoder.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +36,7 @@ public class LoginController {
                 Cookie cookie = new Cookie("ticket",map.get("ticket"));
                 cookie.setPath("/");
                 response.addCookie(cookie);
-                if(org.apache.commons.lang.StringUtils.isNotBlank(next)){
+                if(StringUtils.isNotBlank(next)){
                     return "redirect:"+next;
                 }
                 return "redirect:/";
@@ -71,7 +71,7 @@ public class LoginController {
                 Cookie cookie = new Cookie("ticket", map.get("ticket"));
                 cookie.setPath("/");
                 response.addCookie(cookie);
-                if(org.apache.commons.lang.StringUtils.isNotBlank(next)){
+                if(StringUtils.isNotBlank(next)){
                     return "redirect:"+next;
                 }
                 return "redirect:/";

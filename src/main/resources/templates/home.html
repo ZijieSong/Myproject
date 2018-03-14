@@ -1,47 +1,57 @@
 <html>
 <body>
 <pre>
+    #*
+    你看不到我~~~~
+    *#
     $!{value1}
-    $!{value2}
+    $!{value2} ## 如果不存在，强制为空
     ${value3}
 
-    $!{getColors}
+    colors: $!{colors}
 
-    #foreach(${color} in ${getColors})
-        color is: $!{color} $!{foreach.index} in colors $!{foreach.count}
+    #foreach($color in $colors)
+        This is Color $!{foreach.index}: $color, $!{foreach.count}
     #end
 
-    #foreach($key in $getMap.keySet())
-        key is $key, value is $getMap.get($key)
+    #foreach($key in $map.keySet())
+        Number: $key, Value: $map.get($key)
     #end
 
-    #foreach($entry in $getMap.entrySet())
-        key: $entry.key; value: $entry.value;          
+    #foreach($kv in $map.entrySet())
+        Number: $kv.key, Value: $kv.value
     #end
 
-    User: $people.name and the Description is $people.description
+    User:  $!{user.name}
+    $!{user.description}
+    $!{user.getDescription()}
 
-    #set($title = "nowcorder")
-    title is ${title}
+    #set($title = "nowcoder_title")
+    Title: $!{title}
+
 
     Parse: #parse("header.html")
     Include: #include("header.html")
 
-    #macro(function, $index, $content)
-        Number $index is $content
+    #macro (render_color, $index, $color)
+        Color Render Macro $index, $color
     #end
 
-    #foreach($color in $getColors)
-        #function($foreach.count, $color)
+    #foreach($color in $colors)
+        #render_color($foreach.index, $color)
     #end
 
     #set($hello = "hello")
-    #set($hello1 = "${hello} 1")
-    #set($hello2 = '${hello} 2')
+    #set($helloworld1 = "$!{hello} world")
+    $!hello
+    $helloworld1
+    #set($helloworld2 = '$!{hello} world')
+    $helloworld2
 
-    ${hello}
-    ${hello1}
-    ${hello2}
+
+
+
+
 </pre>
 </body>
 </html>
