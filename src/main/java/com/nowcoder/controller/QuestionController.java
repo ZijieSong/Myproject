@@ -1,9 +1,8 @@
 package com.nowcoder.controller;
 
 import com.nowcoder.dao.QuestionDAO;
-import com.nowcoder.model.HostHolder;
-import com.nowcoder.model.Question;
-import com.nowcoder.model.User;
+import com.nowcoder.model.*;
+import com.nowcoder.service.CommentService;
 import com.nowcoder.service.QuestionService;
 import com.nowcoder.service.UserService;
 import com.nowcoder.util.WendaUtil;
@@ -14,7 +13,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Controller
 public class QuestionController {
@@ -26,6 +27,8 @@ public class QuestionController {
     UserService userService;
     @Autowired
     HostHolder hostHolder;
+    @Autowired
+    CommentService commentService;
 
     @RequestMapping(value = "/question/add",method = RequestMethod.POST)
     @ResponseBody
@@ -54,9 +57,16 @@ public class QuestionController {
     public String questionDetail(Model model,
                                  @PathVariable("questionId") int questionId){
         Question question = questionService.selectById(questionId);
-        User user = userService.getUser(question.getUserId());
         model.addAttribute("question",question);
-        model.addAttribute("user",user);
+        List<Comment> comments = commentService.getCommentsByEntity(questionId, EntityType.EntityType_question);
+        List<ViewObject> vos = new ArrayList<>();
+        for(Comment comment: comments){
+            ViewObject vo = new ViewObject();
+            vo.set("comment",comment);
+            vo.set("user",userService.getUser(comment.getUserId()));
+            vos.add(vo);
+        }
+        model.addAttribute("comments",vos);
         return "detail";
     }
 }

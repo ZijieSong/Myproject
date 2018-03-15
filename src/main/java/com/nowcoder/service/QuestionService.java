@@ -2,6 +2,7 @@ package com.nowcoder.service;
 
 import com.nowcoder.dao.QuestionDAO;
 import com.nowcoder.model.Question;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
@@ -33,5 +34,9 @@ public class QuestionService {
 
     public List<Question> getLastestQuestions(int userId,int offset, int limit){
         return questionDAO.selectLatestQuestions(userId,offset,limit);
+    }
+
+    public boolean updateCommentCount(int count, int id){
+        return questionDAO.updateCommentCount(count,id)>0;
     }
 }
