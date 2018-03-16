@@ -1,9 +1,6 @@
 package com.nowcoder.controller;
 
-import com.nowcoder.model.Comment;
-import com.nowcoder.model.EntityType;
-import com.nowcoder.model.HostHolder;
-import com.nowcoder.model.Question;
+import com.nowcoder.model.*;
 import com.nowcoder.service.CommentService;
 import com.nowcoder.service.QuestionService;
 import com.nowcoder.util.WendaUtil;
@@ -18,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.util.Date;
+import java.util.List;
 
 @Controller
 public class CommentController {
@@ -57,4 +55,5 @@ public class CommentController {
         }
         return "redirect:/question/"+questionId;
     }
+
 }
