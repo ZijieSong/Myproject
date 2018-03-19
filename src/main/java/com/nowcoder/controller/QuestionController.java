@@ -3,6 +3,7 @@ package com.nowcoder.controller;
 import com.nowcoder.dao.QuestionDAO;
 import com.nowcoder.model.*;
 import com.nowcoder.service.CommentService;
+import com.nowcoder.service.LikeService;
 import com.nowcoder.service.QuestionService;
 import com.nowcoder.service.UserService;
 import com.nowcoder.util.WendaUtil;
@@ -29,6 +30,8 @@ public class QuestionController {
     HostHolder hostHolder;
     @Autowired
     CommentService commentService;
+    @Autowired
+    LikeService likeService;
 
     @RequestMapping(value = "/question/add",method = RequestMethod.POST)
     @ResponseBody
@@ -63,6 +66,15 @@ public class QuestionController {
         for(Comment comment: comments){
             ViewObject vo = new ViewObject();
             vo.set("comment",comment);
+            //设置赞踩功能
+            //先设置喜欢与否的标识
+            if(hostHolder.getUser()==null){
+                vo.set("liked",0);
+            }else{
+                vo.set("liked",likeService.getLikeStatus(hostHolder.getUser().getId(),EntityType.EntityType_comment,comment.getId()));
+            }
+            //再设置该评论的喜欢度是多少
+            vo.set("likeCount", likeService.getLikeCount(EntityType.EntityType_comment,comment.getId()));
             vo.set("user",userService.getUser(comment.getUserId()));
             vos.add(vo);
         }

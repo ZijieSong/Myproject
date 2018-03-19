@@ -9,7 +9,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Tuple;
 
-public class JedisAdopter {
+public class JedisAdapterForTest {
     public static void print(int index, Object obj){
         System.out.println(index+","+obj.toString());
     }
