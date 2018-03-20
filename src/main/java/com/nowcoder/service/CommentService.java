@@ -38,4 +38,8 @@ public class CommentService {
     public boolean deleteCommentByEntity(int entityId, int entityType){
         return commentDao.updateStatusByEntity(1,entityId,entityType)>0;
     }
+
+    public Comment getCommentById(int commentId){
+        return commentDao.getCommentById(commentId);
+    }
 }
