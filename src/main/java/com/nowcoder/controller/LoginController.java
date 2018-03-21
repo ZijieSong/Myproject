@@ -1,5 +1,9 @@
 package com.nowcoder.controller;
 
+import com.nowcoder.async.EventModel;
+import com.nowcoder.async.EventProducer;
+import com.nowcoder.async.EventType;
+import com.nowcoder.model.User;
 import org.apache.commons.lang.StringUtils;
 import com.nowcoder.service.UserService;
 import org.slf4j.Logger;
@@ -21,6 +25,8 @@ public class LoginController {
 
     @Autowired
     UserService userService;
+    @Autowired
+    EventProducer eventProducer;
 
     private static final Logger logger = LoggerFactory.getLogger(LoggerFactory.class);
 
@@ -66,11 +72,20 @@ public class LoginController {
                         @RequestParam(value = "rememberme",defaultValue = "false") boolean rememberme,
                         HttpServletResponse response){
         try {
-            Map<String, String> map = userService.login(username, password);
+            Map<String, Object> map = userService.login(username, password);
             if (map.containsKey("ticket")) {
-                Cookie cookie = new Cookie("ticket", map.get("ticket"));
+                Cookie cookie = new Cookie("ticket", (String)map.get("ticket"));
                 cookie.setPath("/");
+                if(rememberme){
+                    cookie.setMaxAge(3600*24*5);
+                }
                 response.addCookie(cookie);
+
+                eventProducer.fireEvent(new EventModel(EventType.LOGIN)
+                        .setActorId(((User)map.get("user")).getId())
+                        .setExts("email","songzijie123@sjtu.edu.cn")
+                        .setExts("username",username));
+
                 if(StringUtils.isNotBlank(next)){
                     return "redirect:"+next;
                 }

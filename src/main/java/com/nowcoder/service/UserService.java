@@ -63,8 +63,8 @@ public class UserService {
         return map;
     }
 
-    public Map<String,String> login(String username, String password){
-        Map<String,String> map = new HashMap<>();
+    public Map<String,Object> login(String username, String password){
+        Map<String,Object> map = new HashMap<>();
         if(org.apache.commons.lang.StringUtils.isBlank(username)){
             map.put("msg","用户名不能为空");
             return map;
@@ -85,6 +85,7 @@ public class UserService {
         //如果登录成功，下发一个T票
         String ticket = addLoginTicket(user.getId());
         map.put("ticket",ticket);
+        map.put("user",user);
         return map;
     }
 

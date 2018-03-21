@@ -38,17 +38,14 @@ public class LikeController {
 
         Comment comment = commentService.getCommentById(commentId);
 
+
         eventProducer.fireEvent(new EventModel(EventType.LIKE)
-                .setActorId(hostHolder.getUser().getId()).setEntityId(commentId)
-                .setEntityType(EntityType.EntityType_comment).setEntityOwnerId(comment.getUserId())
-                .setExts("questionId", String.valueOf(comment.getEntityId())));
-/*        eventProducer.fireEvent(new EventModel(EventType.LIKE)
                 .setExts("questionId", String.valueOf(comment.getEntityId()))
                 .setEntityOwnerId(comment.getUserId())
                 .setActorId(hostHolder.getUser().getId())
                 .setEntityId(commentId)
                 .setEntityType(EntityType.EntityType_comment));
-*/
+
         long likeCount = likeService.like(hostHolder.getUser().getId(), EntityType.EntityType_comment,commentId);
         return WendaUtil.getJSONString(0,String.valueOf(likeCount));
     }

@@ -12,6 +12,24 @@ public class EventModel {
     private int entityOwnerId;
     private Map<String, String> exts = new HashMap<>();
 
+    public Map<String, String> getExts() {
+        return exts;
+    }
+
+    public EventModel setExts(Map<String, String> exts) {
+        this.exts = exts;
+        return this;
+    }
+
+    public EventModel setExts(String key, String value){
+        exts.put(key,value);
+        return this;
+    }
+
+    public String getExts(String key){
+        return exts.get(key);
+    }
+
     public EventModel(){}
     public EventModel(EventType eventType){
         this.eventType = eventType;
@@ -60,14 +78,5 @@ public class EventModel {
     public EventModel setEntityOwnerId(int entityOwnerId) {
         this.entityOwnerId = entityOwnerId;
         return this;
-    }
-
-    public EventModel setExts(String key, String value){
-        exts.put(key,value);
-        return this;
-    }
-
-    public String getExts(String key){
-        return exts.get(key);
     }
 }
