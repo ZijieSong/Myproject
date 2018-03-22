@@ -2,8 +2,11 @@ package com.nowcoder;
 
 import com.nowcoder.dao.QuestionDAO;
 import com.nowcoder.dao.UserDAO;
+import com.nowcoder.model.EntityType;
 import com.nowcoder.model.Question;
 import com.nowcoder.model.User;
+import com.nowcoder.service.FollowService;
+import com.nowcoder.util.JedisAdapter;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,10 +29,15 @@ public class InitialTests {
     UserDAO userDAO;
     @Autowired
     QuestionDAO questionDAO;
+    @Autowired
+    JedisAdapter jedisAdapter;
+    @Autowired
+    FollowService followService;
 
 	@Test
 	public void contextLoads() {
         Random random = new Random();
+        jedisAdapter.getJedis().flushDB();
         Date date = new Date();
 		for(int i =0; i<11; i++){
 		    User user = new User();
@@ -41,6 +49,12 @@ public class InitialTests {
 
 		    user.setPassword("zz");
 		    userDAO.updatePassword(user);
+
+		    //互相关注一波
+            for(int j=1; j<i ;j++){
+                followService.follow(j, EntityType.EntityType_user,i);
+            }
+
 
 		    date.setTime(date.getTime()+1000*3600*i);
             Question question = new Question();

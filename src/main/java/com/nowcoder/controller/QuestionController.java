@@ -2,10 +2,7 @@ package com.nowcoder.controller;
 
 import com.nowcoder.dao.QuestionDAO;
 import com.nowcoder.model.*;
-import com.nowcoder.service.CommentService;
-import com.nowcoder.service.LikeService;
-import com.nowcoder.service.QuestionService;
-import com.nowcoder.service.UserService;
+import com.nowcoder.service.*;
 import com.nowcoder.util.WendaUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +29,8 @@ public class QuestionController {
     CommentService commentService;
     @Autowired
     LikeService likeService;
+    @Autowired
+    FollowService followService;
 
     @RequestMapping(value = "/question/add",method = RequestMethod.POST)
     @ResponseBody
@@ -79,6 +78,26 @@ public class QuestionController {
             vos.add(vo);
         }
         model.addAttribute("comments",vos);
+
+        List<Integer> followerIds = followService.getFollowers(EntityType.EntityType_question,questionId,0,20);
+        List<ViewObject> followUsers = new ArrayList<>();
+        for(Integer followerId:followerIds){
+            User user = userService.getUser(followerId);
+            if(user == null)
+                continue;
+            ViewObject vo = new ViewObject();
+            vo.set("id",user.getId());
+            vo.set("name",user.getName());
+            vo.set("headUrl",user.getHeadUrl());
+            followUsers.add(vo);
+        }
+        model.addAttribute("followUsers",followUsers);
+        if(hostHolder.getUser()!=null) {
+            model.addAttribute("followed", followService.isFollower(hostHolder.getUser().getId(),EntityType.EntityType_question,questionId));
+        }else{
+            model.addAttribute("followed",false);
+        }
+
         return "detail";
     }
 }

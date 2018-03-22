@@ -1,7 +1,11 @@
 package com.nowcoder.controller;
 
+import com.nowcoder.model.EntityType;
+import com.nowcoder.model.HostHolder;
 import com.nowcoder.model.Question;
 import com.nowcoder.model.ViewObject;
+import com.nowcoder.service.CommentService;
+import com.nowcoder.service.FollowService;
 import com.nowcoder.service.QuestionService;
 import com.nowcoder.service.UserService;
 import org.slf4j.Logger;
@@ -27,13 +31,32 @@ public class HomeController {
     UserService userService;
     @Autowired
     QuestionService questionService;
+    @Autowired
+    HostHolder hostHolder;
+    @Autowired
+    FollowService followService;
+    @Autowired
+    CommentService commentService;
 
     @RequestMapping(path = {"/user/{userId}"},method = RequestMethod.GET)
     public String userIndex(Model model,
                             @PathVariable("userId") int userId){
         List<ViewObject> vos = getViewObject(userId,0,10);
         model.addAttribute("vos",vos);
-        return "index";
+
+        ViewObject vo = new ViewObject();
+        if(hostHolder.getUser()!=null){
+            vo.set("followed",followService.isFollower(hostHolder.getUser().getId(), EntityType.EntityType_user,userId));
+        }else{
+            vo.set("followed",false);
+        }
+        vo.set("user",userService.getUser(userId));
+        vo.set("followerCount",followService.getFollowerCount(EntityType.EntityType_user,userId));
+        vo.set("followeeCount",followService.getFolloweeCount(userId,EntityType.EntityType_user));
+        vo.set("commentCount",commentService.getUserCommentCount(userId));
+        model.addAttribute("profileUser",vo);
+
+        return "profile";
     }
 
     @RequestMapping(path = {"/","/index"},method = RequestMethod.GET)
@@ -50,6 +73,7 @@ public class HomeController {
             ViewObject vo =new ViewObject();
             vo.set("question",question);
             vo.set("user",userService.getUser(question.getUserId()));
+            vo.set("followCount",followService.getFollowerCount(EntityType.EntityType_question,question.getId()));
             vos.add(vo);
         }
         return vos;
