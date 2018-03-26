@@ -1,5 +1,8 @@
 package com.nowcoder.controller;
 
+import com.nowcoder.async.EventModel;
+import com.nowcoder.async.EventProducer;
+import com.nowcoder.async.EventType;
 import com.nowcoder.model.*;
 import com.nowcoder.service.CommentService;
 import com.nowcoder.service.QuestionService;
@@ -28,6 +31,9 @@ public class CommentController {
     @Autowired
     QuestionService questionService;
 
+    @Autowired
+    EventProducer eventProducer;
+
     private static final Logger logger = LoggerFactory.getLogger(CommentController.class);
 
     @RequestMapping(value = "/addComment",method = RequestMethod.POST)
@@ -50,6 +56,13 @@ public class CommentController {
 
             int count = commentService.getCommentCount(comment.getEntityId(), comment.getEntityType());
             questionService.updateCommentCount(count, comment.getEntityId());
+
+            Question question = questionService.selectById(questionId);
+            eventProducer.fireEvent(new EventModel(EventType.COMMENT)
+                    .setActorId(comment.getUserId())
+                    .setEntityType(EntityType.EntityType_question)
+                    .setEntityId(questionId).setEntityOwnerId(question.getUserId()));
+
         }catch (Exception e){
             logger.error("添加评论失败"+e.getMessage());
         }
