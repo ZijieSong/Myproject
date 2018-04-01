@@ -1,5 +1,8 @@
 package com.nowcoder.controller;
 
+import com.nowcoder.async.EventModel;
+import com.nowcoder.async.EventProducer;
+import com.nowcoder.async.EventType;
 import com.nowcoder.dao.QuestionDAO;
 import com.nowcoder.model.*;
 import com.nowcoder.service.*;
@@ -31,6 +34,8 @@ public class QuestionController {
     LikeService likeService;
     @Autowired
     FollowService followService;
+    @Autowired
+    EventProducer eventProducer;
 
     @RequestMapping(value = "/question/add",method = RequestMethod.POST)
     @ResponseBody
@@ -47,8 +52,15 @@ public class QuestionController {
             }else{
                 question.setUserId(hostHolder.getUser().getId());
             }
-            if(questionService.addQuestion(question)>0)
+            if(questionService.addQuestion(question)>0) {
+                eventProducer.fireEvent(new EventModel(EventType.ADD_QUESTION)
+                        .setActorId(question.getUserId())
+                        .setEntityId(question.getId())
+                        .setExts("title",question.getTitle())
+                        .setExts("content",question.getContent()));
+
                 return WendaUtil.getJSONString(0);
+            }
         }catch (Exception e){
             logger.error("增加题目失败"+e.getMessage());
         }
